@@ -6,7 +6,8 @@ export default class Game{
     constructor(ctx, canvas){
         this.ctx = ctx;
         this.canvas = canvas;
-        this.wallindex = 0;
+        this.roomX = 0;
+        this.roomY = 0;
     }
 
 update() {
@@ -25,28 +26,40 @@ update() {
     if (keys.has("ArrowRight") || keys.has("d")){
         x+=player.speed;
     }
-    move(x,y, walls[this.wallindex]);
+    move(x,y, walls[this.roomY][this.roomX]);
 
-    //changes screen
-    if(player.x>this.canvas.width-player.width && this.wallindex<walls.length-1){
-    this.wallindex++;
+ //walls
+    //right
+if (player.x > this.canvas.width - player.width && this.roomX < walls[this.roomY].length - 1){
+    this.roomX++;
     player.x=0;
 }
-    if(player.x<0 && this.wallindex>0){
-    this.wallindex--;
+    //left
+if (player.x<0 && this.roomX>0){
+    this.roomX--;
     player.x=this.canvas.width-player.width;
 }
-
+    //up
+if (player.y <0 && this.roomY >0){
+    this.roomY--;
+    player.y = this.canvas.height - player.height
+}
+    //down
+if (player.y > this.canvas.height - player.height && this.roomY < walls.length-1){
+    this.roomY++;
+    player.y = 0;
+}
 }
    
 draw(){
+    //player
     this.ctx.fillStyle = "purple";
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
      this.ctx.fillRect(player.x, player.y, player.width, player.height);
 
     //walls
     this.ctx.fillStyle = "pink";
-    for(const wall of walls[this.wallindex]){
+    for(const wall of walls[this.roomY][this.roomX]){
         this.ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
     }
 }
