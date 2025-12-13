@@ -67,16 +67,16 @@ function game() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     let x = 0;
     let y = 0;
-    if (keys.has("ArrowUp")){
+    if (keys.has("ArrowUp") || keys.has("w")){
          y-=player.speed;
     }
-    if (keys.has("ArrowDown")){
+    if (keys.has("ArrowDown") || keys.has("s")){
         y+=player.speed;
     }
-    if (keys.has("ArrowLeft")){
+    if (keys.has("ArrowLeft") || keys.has("a")){
         x-=player.speed;
     }
-    if (keys.has("ArrowRight")){
+    if (keys.has("ArrowRight") || keys.has("d")){
         x+=player.speed;
     }
     move(x,y);
@@ -103,4 +103,3 @@ function game() {
 }
 
 requestAnimationFrame(game);
-
