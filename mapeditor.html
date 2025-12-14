@@ -102,7 +102,7 @@
     };
 
     document.getElementById('export').onclick = async () => {
-      const out = `export const maps = ${JSON.stringify(
+      const out = ${JSON.stringify(
         maps.map(m => [m[0].map(r => r.join(''))]),
         null,
         2
