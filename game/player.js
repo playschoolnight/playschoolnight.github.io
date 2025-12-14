@@ -1,7 +1,7 @@
 import { collision } from "./collision.js";
 
 export const player = {
-    x: 100,
+    x: 1000,
     y: 100,
     width: 32,
     height: 32,
