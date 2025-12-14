@@ -43,8 +43,7 @@
     const gridEl = document.getElementById('grid');
     const mapsEl = document.getElementById('maps');
 
-    document.body.onmousedown = () => mouseDown = true;
-    document.body.onmouseup = () => mouseDown = false;
+    window.onmouseup = () => mouseDown = false;
 
     function renderMapButtons() {
       mapsEl.innerHTML = '';
@@ -65,15 +64,22 @@
         row.forEach((cell, x) => {
           const d = document.createElement('div');
           d.className = 'cell' + (cell === '#' ? ' wall' : '');
-          d.onmousedown = () => { mouseDown = true; draw(y, x); };
-          d.onmouseover = () => mouseDown && draw(y, x);
+
+          d.onmousedown = () => {
+            mouseDown = true;
+            draw(y, x); // single click paints one tile
+          };
+
+          d.onmouseover = () => {
+            if (mouseDown) draw(y, x);
+          };
+
           gridEl.appendChild(d);
         });
       });
     }
 
     function draw(y, x) {
-      if (!mouseDown) return;
       maps[mapIndex][0][y][x] = drawing;
       render();
     }
