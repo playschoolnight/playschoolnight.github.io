@@ -102,11 +102,10 @@
     };
 
     document.getElementById('export').onclick = async () => {
-      const out = JSON.stringify(
-        maps.map(m => [m[0].map(r => r.join(''))]),
-        null,
-        2
-      )};`;
+      const rows = maps[mapIndex][0].map(r => `"${r.join('')}"`).join(',\n');
+      await navigator.clipboard.writeText(rows);
+      alert('Copied to clipboard');
+    };`;
 
       await navigator.clipboard.writeText(out);
       alert('Copied to clipboard');
