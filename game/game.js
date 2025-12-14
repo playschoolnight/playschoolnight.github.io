@@ -38,21 +38,21 @@ export default class Game {
     if (player.x >= this.worldWidth - player.width && this.roomX < maps[this.roomY].length - 1) {
       this.roomX++;
       this.loadRoom();
-      player.x = 1;
+      player.x = 0;
       return;
     }
 
     if (player.x <= 0 && this.roomX > 0) {
       this.roomX--;
       this.loadRoom();
-      player.x = this.worldWidth - player.width - 1;
+      player.x = this.worldWidth - player.width;
       return;
     }
 
     if (player.y <= 0 && this.roomY > 0) {
       this.roomY--;
       this.loadRoom();
-      player.y = this.worldHeight - player.height - 1;
+      player.y = this.worldHeight - player.height;
       return;
     }
 
@@ -62,7 +62,7 @@ export default class Game {
     ) {
       this.roomY++;
       this.loadRoom();
-      player.y = 1;
+      player.y = 0;
       return;
     }
 
