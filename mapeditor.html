@@ -11,6 +11,7 @@
       height: 20px;
       border: 1px solid #ccc;
       cursor: pointer;
+      box-sizing: border-box;
     }
     .wall { background: black; }
   </style>
@@ -85,7 +86,7 @@
 
     function paint(y, x) {
       const key = y + ',' + x;
-      if (lastCell === key) return; // prevent re-painting same cell
+      if (lastCell === key) return;
       lastCell = key;
 
       maps[mapIndex][0][y][x] = drawing;
@@ -102,12 +103,11 @@
     };
 
     document.getElementById('export').onclick = async () => {
-      const rows = maps[mapIndex][0].map(r => `"${r.join('')}"`).join(',\n');
-      await navigator.clipboard.writeText(rows);
-      alert('Copied to clipboard');
-    };`;
+      const rows = maps[mapIndex][0]
+        .map(r => `"${r.join('')}"`)
+        .join(',\n');
 
-      await navigator.clipboard.writeText(out);
+      await navigator.clipboard.writeText(rows);
       alert('Copied to clipboard');
     };
 
