@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 
 const tileSize = 32;
-const worldWidth = tileSize * 28;
+const worldWidth = tileSize * 32;
 const worldHeight = tileSize * 18;
 
 function resizeCanvas() {
