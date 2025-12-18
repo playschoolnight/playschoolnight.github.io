@@ -16,15 +16,8 @@ export default class Game {
 
     this.loadRoom();
   }
-  music = [["hallPass", "zoningOut"],["horrorsOfHamilton", "captureTheFlag"]];
-  wallImage = document.getElementById("wallImage");
-  whiteFloor = document.getElementById("whiteFloor");
-  blueFloor = document.getElementById("blueFloor");
-  characterGreen = document.getElementById("characterGreen");
-  corner1 = document.getElementById("corner1");
-  corner2 = document.getElementById("corner2");
-  wallCorner1 = document.getElementById("wallCorner1");
-  wallCorner2 = document.getElementById("wallCorner2");
+  music = [["hallPass", "zoningOut"],
+  ["horrorsOfHamilton", "captureTheFlag"]];
 
   loadRoom() {
     this.currentMap = maps[this.roomY][this.roomX];
@@ -119,7 +112,7 @@ move(dx, dy, this.walls);
         this.ctx.drawImage(img, wall.x, wall.y, 32, 32);
      }
    }
-    this.ctx.drawImage(characterGreen, player.x, player.y);
+    this.ctx.drawImage(characterGreen, player.x-7, player.y-60);
   }
 
   run = () => {
