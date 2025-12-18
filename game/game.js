@@ -43,6 +43,7 @@ export default class Game {
   }
 
   update() {
+    if(document.fullscreenElement){
 let dx = 0;
 let dy = 0;
 
@@ -100,6 +101,7 @@ move(dx, dy, this.walls);
 
     player.x = Math.max(0, Math.min(player.x, this.worldWidth - player.width));
     player.y = Math.max(0, Math.min(player.y, this.worldHeight - player.height));
+  }
   }
 
   draw() {

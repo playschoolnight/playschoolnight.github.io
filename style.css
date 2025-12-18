@@ -30,17 +30,16 @@ canvas {
 }
 
 button:hover {
-  background-color: lightpink;
+  background-color: #b4b0ed;
 }
 
 button {
   color: white;
   border-width: 0px;
-  border-radius: 10px;
-  background-color:pink;
+  background-color:#a19fd9;
   width: fit-content;
-  font-size: 5vw;
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 50px;
+  font-family:"Pixelify Sans", sans-serif;
   z-index: 9999;
 }
 #fullscreen{
