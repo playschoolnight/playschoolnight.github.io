@@ -5,6 +5,7 @@ html, body {
   height: 100%;
   overflow: hidden;
     background-color:black;
+    cursor: url("assets/cursor.png"), auto;
 }
 
 canvas {
@@ -41,6 +42,7 @@ button {
   font-size: 50px;
   font-family:"Pixelify Sans", sans-serif;
   z-index: 9999;
+  cursor: url("assets/cursor.png"), auto;
 }
 #fullscreen{
   display:none;

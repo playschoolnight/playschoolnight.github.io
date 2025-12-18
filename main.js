@@ -34,6 +34,7 @@ document.getElementById("start").onclick = async () => {
 
   if (document.documentElement.requestFullscreen) {
     await document.documentElement.requestFullscreen();
+    await document.documentElement.requestPointerLock();
   }
 
   game.start();
@@ -44,6 +45,7 @@ const fullscreenBtn = document.getElementById("fullscreen");
 fullscreenBtn.onclick = async () => {
   if (!document.fullscreenElement) {
     await document.documentElement.requestFullscreen();
+    await document.documentElement.requestPointerLock();
   }
 };
 
