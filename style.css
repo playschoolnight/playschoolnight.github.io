@@ -6,6 +6,7 @@ html, body {
   overflow: hidden;
     background-color:black;
     cursor: url("assets/cursor.png"), auto;
+    font-family: "Jersey 10", sans-serif;
 }
 
 canvas {
@@ -40,13 +41,21 @@ button {
   background-color:#a19fd9;
   width: fit-content;
   font-size: 50px;
-  font-family:"Pixelify Sans", sans-serif;
   z-index: 9999;
   cursor: url("assets/cursor.png"), auto;
+  font-family: "Jersey 10", sans-serif;
 }
 #fullscreen{
   display:none;
 }
 img{
   display:none;
+}
+h1{
+  font-size:100px;
+  position: fixed;         
+  inset: 0;                     
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }

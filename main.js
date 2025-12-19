@@ -31,6 +31,7 @@ const game = new Game(ctx, canvas);
 
 document.getElementById("start").onclick = async () => {
   document.getElementById("start").style.display = "none";
+  document.getElementById("title").style.display = "none";
 
   if (document.documentElement.requestFullscreen) {
     await document.documentElement.requestFullscreen();
@@ -54,8 +55,10 @@ fullscreenBtn.onclick = async () => {
 document.addEventListener("fullscreenchange", () => {
     if(document.fullscreenElement){
         fullscreenBtn.style.display = "none";
+        document.getElementById("title").style.display = "none";
     }else{
         fullscreenBtn.style.display = "block";
+         document.getElementById("title").style.display = "block";
     }
      
 });
