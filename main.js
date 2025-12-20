@@ -22,43 +22,27 @@ function resizeCanvas() {
   canvas.style.height = `${worldHeight * scale}px`;
 }
 
-
-
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 const game = new Game(ctx, canvas);
 
-document.getElementById("start").onclick = async () => {
-  document.getElementById("start").style.display = "none";
-  document.getElementById("title").style.display = "none";
+const menu = document.getElementById("startMenu");
+const title = document.getElementById("title");
+const startBtn = document.getElementById("start");
 
-  if (document.documentElement.requestFullscreen) {
-    await document.documentElement.requestFullscreen();
-    await document.documentElement.requestPointerLock();
-  }
-
-  game.start();
+startBtn.onclick = async () => {
+  await document.documentElement.requestFullscreen();
 };
-
-const fullscreenBtn = document.getElementById("fullscreen");
-
-fullscreenBtn.onclick = async () => {
-  if (!document.fullscreenElement) {
-    await document.documentElement.requestFullscreen();
-    await document.documentElement.requestPointerLock();
-  }
-};
-
-
 
 document.addEventListener("fullscreenchange", () => {
-    if(document.fullscreenElement){
-        fullscreenBtn.style.display = "none";
-        document.getElementById("title").style.display = "none";
-    }else{
-        fullscreenBtn.style.display = "block";
-         document.getElementById("title").style.display = "block";
-    }
-     
+  if (document.fullscreenElement) {
+    menu.style.display = "none";
+    title.style.display = "none";
+    game.resume();
+  } else {
+    menu.style.display = "flex";
+    title.style.display = "block";
+    game.pause();
+  }
 });

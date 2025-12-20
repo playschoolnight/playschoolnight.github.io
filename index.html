@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Night</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="School_Night.png" type="image/png">
-    
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>School Night</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="School_Night.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas id="game"></canvas>
+  <canvas id="game"></canvas>
+
+  <div id="startMenu">
     <h1 id="title">School Night</h1>
-    <div id="startMenu">
-    <button id="start">Start</button>
-    <button id="fullscreen">Back to game</button>
-    </div>
-    <script type="module" src="main.js"></script>
 
-    <audio id="hallPass"> <source src="assets/audio/hallPass.mp3" type="audio/mpeg"> </audio>
-    <audio id="zoningOut"> <source src="assets/audio/zoningOut.mp3" type="audio/mpeg"> </audio>
-    <audio id="captureTheFlag"> <source src="assets/audio/captureTheFlag.mp3" type="audio/mpeg"> </audio>
-    <audio id="horrorsOfHamilton"> <source src="assets/audio/horrorsOfHamilton.mp3" type="audio/mpeg"> </audio>
+    <button id="start">Play</button>
 
-    <img id="wallImage" src="assets/tiles/walls.png">
-    <img id="whiteFloor" src="assets/tiles/floorWhite.png">
-    <img id="blueFloor" src="assets/tiles/floorBlue.png">
-    <img id="corner1" src="assets/tiles/corner1.png">
-    <img id="corner2" src="assets/tiles/corner2.png">
-    <img id="wallCorner1" src="assets/tiles/wallCorner1.png">
-    <img id="wallCorner2" src="assets/tiles/wallCorner2.png">
+    <label>
+      Volume:
+      <input id="volumeSlider" type="range" min="0" max="100" value="50">
+    </label>
+  </div>
 
-    <img id="characterGreen" src="assets/characters/characterGreen.png">
+  <script type="module" src="main.js"></script>
+
+  <audio id="hallPass" src="assets/audio/hallPass.mp3"></audio>
+  <audio id="zoningOut" src="assets/audio/zoningOut.mp3"></audio>
+  <audio id="captureTheFlag" src="assets/audio/captureTheFlag.mp3"></audio>
+  <audio id="horrorsOfHamilton" src="assets/audio/horrorsOfHamilton.mp3"></audio>
+
+  <img id="wallImage" src="assets/tiles/walls.png">
+  <img id="whiteFloor" src="assets/tiles/floorWhite.png">
+  <img id="blueFloor" src="assets/tiles/floorBlue.png">
+  <img id="corner1" src="assets/tiles/corner1.png">
+  <img id="corner2" src="assets/tiles/corner2.png">
+  <img id="wallCorner1" src="assets/tiles/wallCorner1.png">
+  <img id="wallCorner2" src="assets/tiles/wallCorner2.png">
+  <img id="characterGreen" src="assets/characters/characterGreen.png">
 </body>
 </html>
