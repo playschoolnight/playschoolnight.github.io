@@ -73,3 +73,43 @@ label {
 }
 
 img { display: none; }
+#fps{
+  position:fixed;
+  top:10px;
+  font-size:24px;
+  color:white;
+  padding: 4px 8px;
+  z-index: 100000;
+  font-family: "Jersey 10", sans-serif;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-family: "Jersey 10", monospace;
+  font-size: 24px;
+  color: #a19fd9;
+
+  cursor: pointer;
+  user-select: none;
+  margin-top: 10px;
+}
+
+.checkbox .box {
+  width: 22px;
+  height: 22px;
+
+  background: white;
+  border: 3px solid #a19fd9;
+  box-sizing: border-box;
+}
+
+
+.checkbox.checked .box {
+  background: #a19fd9;
+}
+
+.checkbox:hover .box {
+  outline: 2px solid #a19fd9;
+}

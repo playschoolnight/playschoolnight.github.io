@@ -8,7 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
 </head>
 <body>
+
   <canvas id="game"></canvas>
+    <div id="fps"> FPS: --</div>
 
   <div id="startMenu">
     <h1 id="title">School Night</h1>
@@ -19,6 +21,11 @@
       Volume:
       <input id="volumeSlider" type="range" min="0" max="100" value="50">
     </label>
+    <label id="fpsToggle" class="checkbox">
+      <span class="box"></span>
+      <span class="label">Show FPS</span>
+    </label>
+
   </div>
 
   <script type="module" src="main.js"></script>

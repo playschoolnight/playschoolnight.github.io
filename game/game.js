@@ -21,7 +21,6 @@ export default class Game {
     this.prevWalls = null;
     this.nextWalls = null;
 
-
     this.paused = true;
     this.started = false;
 
@@ -34,6 +33,10 @@ export default class Game {
     ];
     this.currentMusic = null;
 
+    this.fpsElement = document.getElementById("fps");
+    this.fpsFrames = 0;
+    this.fpsLastTime = performance.now();
+
     this.loadGame();
 
     this.volumeSlider.value = this.volume * 100;
@@ -42,6 +45,28 @@ export default class Game {
       document.querySelectorAll("audio").forEach(a => a.volume = this.volume);
       this.saveGame();
     };
+
+  
+
+    
+
+this.fpsToggle = document.getElementById("fpsToggle");
+
+if (this.fpsToggle && this.fpsElement) {
+
+  this.fpsToggle.classList.toggle("checked", this.showFPS);
+  this.fpsElement.style.display = this.showFPS ? "block" : "none";
+
+  this.fpsToggle.onclick = () => {
+    this.showFPS = !this.showFPS;
+
+    this.fpsToggle.classList.toggle("checked", this.showFPS);
+    this.fpsElement.style.display = this.showFPS ? "block" : "none";
+
+    this.saveGame();
+  };
+}
+
 
     this.loadRoom();
   }
@@ -62,7 +87,8 @@ export default class Game {
       roomX: this.roomX,
       roomY: this.roomY,
       playerX: player.x,
-      playerY: player.y
+      playerY: player.y,
+      showFPS: this.showFPS
     }));
   }
 
@@ -74,6 +100,7 @@ export default class Game {
     this.roomY = d.roomY ?? 0;
     player.x = d.playerX ?? 64;
     player.y = d.playerY ?? 64;
+    this.showFPS = d.showFPS ?? true;
   }
 
   loadRoom() {
@@ -101,51 +128,48 @@ export default class Game {
     this.currentMusic.play();
   }
   
-startTransition(dx, dy) {
-  if (this.transitioning) return;
+  startTransition(dx, dy) {
+    if (this.transitioning) return;
 
-  this.transitioning = true;
-  this.transitionDir = { dx, dy };
+    this.transitioning = true;
+    this.transitionDir = { dx, dy };
 
-  this.prevWalls = this.walls;
+    this.prevWalls = this.walls;
 
-  const nextRoomX = this.roomX + dx;
-  const nextRoomY = this.roomY + dy;
+    const nextRoomX = this.roomX + dx;
+    const nextRoomY = this.roomY + dy;
 
-  const nextMap = maps[nextRoomY][nextRoomX];
-  this.nextWalls = buildWalls(nextMap);
+    const nextMap = maps[nextRoomY][nextRoomX];
+    this.nextWalls = buildWalls(nextMap);
 
-  this.targetCamX = dx * this.w;
-  this.targetCamY = dy * this.h;
-}
+    this.targetCamX = dx * this.w;
+    this.targetCamY = dy * this.h;
+  }
 
+  finishTransition() {
+    this.roomX += this.transitionDir.dx;
+    this.roomY += this.transitionDir.dy;
 
-finishTransition() {
-  this.roomX += this.transitionDir.dx;
-  this.roomY += this.transitionDir.dy;
+    this.loadRoom();
 
-  this.loadRoom();
+    if (this.transitionDir.dx == 1) player.x = 0;
+    if (this.transitionDir.dx == -1) player.x = this.w - player.width;
+    if (this.transitionDir.dy == 1) player.y = 0;
+    if (this.transitionDir.dy == -1) player.y = this.h - player.height;
 
-  if (this.transitionDir.dx == 1) player.x = 0;
-  if (this.transitionDir.dx == -1) player.x = this.w - player.width;
-  if (this.transitionDir.dy == 1) player.y = 0;
-  if (this.transitionDir.dy == -1) player.y = this.h - player.height;
+    this.cameraX = 0;
+    this.cameraY = 0;
+    this.targetCamX = 0;
+    this.targetCamY = 0;
 
-  this.cameraX = 0;
-  this.cameraY = 0;
-  this.targetCamX = 0;
-  this.targetCamY = 0;
+    this.prevWalls = null;
+    this.nextWalls = null;
 
-  this.prevWalls = null;
-  this.nextWalls = null;
+    this.transitioning = false;
+    this.transitionDir = null;
 
-  this.transitioning = false;
-  this.transitionDir = null;
-
-  this.saveGame();
-}
-
-
+    this.saveGame();
+  }
 
   update() {
     if (this.paused) return;
@@ -174,56 +198,63 @@ finishTransition() {
 
     if (player.x >= this.w && this.roomX < maps[0].length - 1)
       this.startTransition(1, 0);
-
     else if (player.x < 0 && this.roomX > 0)
       this.startTransition(-1, 0);
-
     else if (player.y >= this.h && this.roomY < maps.length - 1)
       this.startTransition(0, 1);
-
     else if (player.y < 0 && this.roomY > 0)
       this.startTransition(0, -1);
   }
 
   draw() {
-  this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-  this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-  this.ctx.setTransform(1, 0, 0, 1, -this.cameraX, -this.cameraY);
+    this.ctx.setTransform(1, 0, 0, 1, -this.cameraX, -this.cameraY);
 
-  for (const w of this.walls) {
-    this.ctx.drawImage(
-      document.getElementById(w.id),
-      w.x,
-      w.y,
-      32,
-      32
-    );
-  }
-
-  if (this.transitioning && this.nextWalls) {
-    const ox = this.transitionDir.dx * this.w;
-    const oy = this.transitionDir.dy * this.h;
-
-    for (const w of this.nextWalls) {
+    for (const w of this.walls) {
       this.ctx.drawImage(
         document.getElementById(w.id),
-        w.x + ox,
-        w.y + oy,
+        w.x,
+        w.y,
         32,
         32
       );
     }
+
+    if (this.transitioning && this.nextWalls) {
+      const ox = this.transitionDir.dx * this.w;
+      const oy = this.transitionDir.dy * this.h;
+
+      for (const w of this.nextWalls) {
+        this.ctx.drawImage(
+          document.getElementById(w.id),
+          w.x + ox,
+          w.y + oy,
+          32,
+          32
+        );
+      }
+    }
+
+    this.ctx.drawImage(characterGreen, player.x - 7, player.y - 60);
   }
 
-  this.ctx.drawImage(characterGreen, player.x - 7, player.y - 60);
-}
-
-
   run = () => {
+    this.fpsFrames++;
+    const now = performance.now();
+    if (now - this.fpsLastTime >= 1000) {
+      if (this.fpsElement) {
+        this.fpsElement.textContent = `FPS: ${this.fpsFrames}`;
+      }
+      this.fpsFrames = 0;
+      this.fpsLastTime = now;
+    }
+
     this.update();
     this.draw();
-    requestAnimationFrame(this.run);
     this.updateMusic();
+
+    requestAnimationFrame(this.run);
   };
 }
