@@ -4,7 +4,7 @@ export const player = {
   y: 64,
   width: 18,
   height: 14,
-  speed: 4
+  speed: 2
 };
 
 export function move(dx, dy, walls) {
