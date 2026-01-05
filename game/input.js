@@ -1,6 +1,6 @@
 export const keys = new Set();
 
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", e => {3
   keys.add(e.key);
 });
 

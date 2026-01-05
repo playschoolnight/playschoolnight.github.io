@@ -78,6 +78,7 @@ img { display: none; }
   top:10px;
   font-size:24px;
   color:white;
+  background-color: #a19fd9;
   padding: 4px 8px;
   z-index: 100000;
   font-family: "Jersey 10", sans-serif;
