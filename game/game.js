@@ -6,6 +6,7 @@ import { buildWalls, tileSize } from "./tiles.js";
 import { createMeleeHitbox } from "./attack.js";
 import { createEnemy, updateEnemy } from "./enemies.js";
 import { collision } from "./collision.js";
+import { createProjectile, updateProjectile } from "./projectile.js";
 
 
 export default class Game {
@@ -47,12 +48,18 @@ export default class Game {
       //enemies and combat
     this.attacks = [];
     this.enemies = [ createEnemy(200, 200) ];
+    this.projectiles = [];
+
+    //projectile cooldown
+    this.projectileCooldown = 0;
+    this.projectileRate = 20;
 
       //fps tracker
     this.fpsElement = document.getElementById("fps");
     this.fpsFrames = 0;
     this.fpsLastTime = performance.now();
 
+    this.showFPS = true;
     this.loadGame();
 
   
@@ -212,55 +219,85 @@ if (this.fpsToggle && this.fpsElement) {
     if (keys.has(" ") && player.attackCooldown <= 0) {
         this.attacks.push(createMeleeHitbox(player));
         player.attackCooldown = player.attackRate;
-      }
+    }
 
-      if (player.attackCooldown > 0)
-      player.attackCooldown--;
+    if (player.attackCooldown > 0) player.attackCooldown--;
 
-      for (const atk of this.attacks) atk.life--;
-      this.attacks = this.attacks.filter(a => a.life > 0);
+    //projectile cooldown
+    if (this.projectileCooldown > 0) this.projectileCooldown--;
 
-      for (const enemy of this.enemies) {
-          updateEnemy(enemy, player);
+    if(keys.has("f") && this.projectileCooldown <= 0) {
+        this.projectiles.push(createProjectile(player));
+        this.projectileCooldown = this.projectileRate;
+    }
 
+    for (const atk of this.attacks) atk.life--;
+    this.attacks = this.attacks.filter(a => a.life > 0);
 
-      for (const atk of this.attacks) {
-            if (collision(enemy, atk)) {
-            enemy.hp -= atk.damage;
-            atk.life = 0;
+    for (const enemy of this.enemies) updateEnemy(enemy, player);
 
-            const dx = enemy.x - player.x;
-            const dy = enemy.y - player.y;
-            const l = Math.hypot(dx, dy) || 1;
-            
-            const force = 10;
+    // update projectiles
+    for (const proj of this.projectiles) {
+        updateProjectile(proj, this.walls);
 
-            enemy.kbX = (dx / l) * force;
-            enemy.kbY = (dy / l) * force;
+        for (const enemy of this.enemies) {
+            if (collision(enemy, proj)) {
+                enemy.hp -= proj.damage;
+                proj.life = 0;
 
-            if (enemy.hp <= 0) enemy.alive = false;
+                const dx = enemy.x - player.x;
+                const dy = enemy.y - player.y;
+                const l = Math.hypot(dx, dy) || 1;
+                
+                const force = 10;
+
+                enemy.kbX = (dx / l) * force;
+                enemy.kbY = (dy / l) * force;
+
+                if (enemy.hp <= 0) enemy.alive = false;
+            }
         }
-    }    
-}
+    }
 
+    this.projectiles = this.projectiles.filter(p => p.life > 0);
+    this.enemies = this.enemies.filter(e => e.alive);
 
-this.enemies = this.enemies.filter(e => e.alive);
+    // melee attack collisions
+    for (const enemy of this.enemies) {
+        for (const atk of this.attacks) {
+            if (collision(enemy, atk)) {
+                enemy.hp -= atk.damage;
+                atk.life = 0;
+
+                const dx = enemy.x - player.x;
+                const dy = enemy.y - player.y;
+                const l = Math.hypot(dx, dy) || 1;
+                
+                const force = 10;
+
+                enemy.kbX = (dx / l) * force;
+                enemy.kbY = (dy / l) * force;
+
+                if (enemy.hp <= 0) enemy.alive = false;
+            }
+        }
+    }
 
     if (dx || dy) {
-      player.facing.x = dx;
-      player.facing.y = dy;
-      const l = Math.hypot(dx, dy);
-      move((dx / l) * player.speed, (dy / l) * player.speed, this.walls);
+        player.facing.x = dx;
+        player.facing.y = dy;
+        const l = Math.hypot(dx, dy);
+        move((dx / l) * player.speed, (dy / l) * player.speed, this.walls);
     }
 
     if (player.x >= this.w && this.roomX < maps[0].length - 1)
-      this.startTransition(1, 0);
+        this.startTransition(1, 0);
     else if (player.x < 0 && this.roomX > 0)
-      this.startTransition(-1, 0);
+        this.startTransition(-1, 0);
     else if (player.y >= this.h && this.roomY < maps.length - 1)
-      this.startTransition(0, 1);
+        this.startTransition(0, 1);
     else if (player.y < 0 && this.roomY > 0)
-      this.startTransition(0, -1);
+        this.startTransition(0, -1);
   }
 
   //render game graphics
@@ -295,16 +332,21 @@ this.enemies = this.enemies.filter(e => e.alive);
       }
     }
 
-    this.ctx.drawImage(characterGreen, player.x - 7, player.y - 60);
+    const characterGreen = document.getElementById("characterGreen");
+    if(characterGreen) this.ctx.drawImage(characterGreen, player.x - 7, player.y - 60);
   
   
     this.ctx.fillStyle = "red";
     for (const atk of this.attacks)
-    this.ctx.fillRect(atk.x, atk.y, atk.width, atk.height);
+      this.ctx.fillRect(atk.x, atk.y, atk.width, atk.height);
 
     const maria = document.getElementById("maria");
     for (const e of this.enemies)
-    this.ctx.drawImage(maria, e.x, e.y - 32);
+      if(maria) this.ctx.drawImage(maria, e.x, e.y - 32);
+
+    this.ctx.fillStyle = "yellow";
+    for (const proj of this.projectiles)
+      this.ctx.fillRect(proj.x, proj.y, proj.width, proj.height);
   }
 
   //main game loop
