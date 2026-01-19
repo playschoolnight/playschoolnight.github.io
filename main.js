@@ -1,5 +1,6 @@
 import Game from "./game/game.js";
 
+//canvas setup
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
@@ -9,6 +10,7 @@ const tileSize = 32;
 const worldWidth = tileSize * 32;
 const worldHeight = tileSize * 18;
 
+//canvas scalling
 function resizeCanvas() {
   const scale = Math.min(
     window.innerWidth / worldWidth,
@@ -27,10 +29,12 @@ resizeCanvas();
 
 const game = new Game(ctx, canvas);
 
+//menu elements
 const menu = document.getElementById("startMenu");
 const title = document.getElementById("title");
 const startBtn = document.getElementById("start");
 
+//fullscreen toggle
 startBtn.onclick = async () => {
   await document.documentElement.requestFullscreen();
 };

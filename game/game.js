@@ -3,10 +3,17 @@ import { keys } from "./input.js";
 import { maps } from "./walls.js";
 import { buildWalls, tileSize } from "./tiles.js";
 
+import { createMeleeHitbox } from "./attack.js";
+import { createEnemy, updateEnemy } from "./enemies.js";
+import { collision } from "./collision.js";
+
+
 export default class Game {
   constructor(ctx) {
     this.ctx = ctx;
 
+
+      //rooms and transitions
     this.roomX = 0;
     this.roomY = 0;
 
@@ -21,6 +28,8 @@ export default class Game {
     this.prevWalls = null;
     this.nextWalls = null;
 
+
+      //audio
     this.paused = true;
     this.started = false;
 
@@ -32,19 +41,21 @@ export default class Game {
       ["horrorsOfHamilton", "captureTheFlag"]
     ];
     this.currentMusic = null;
+    
 
+
+      //enemies and combat
+    this.attacks = [];
+    this.enemies = [ createEnemy(200, 200) ];
+
+      //fps tracker
     this.fpsElement = document.getElementById("fps");
     this.fpsFrames = 0;
     this.fpsLastTime = performance.now();
 
     this.loadGame();
 
-    this.volumeSlider.value = this.volume * 100;
-    this.volumeSlider.oninput = () => {
-      this.volume = this.volumeSlider.value / 100;
-      document.querySelectorAll("audio").forEach(a => a.volume = this.volume);
-      this.saveGame();
-    };
+  
 
   
 
@@ -71,6 +82,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.loadRoom();
   }
 
+  //pause and resume
   pause() { this.paused = true; }
 
   resume() {
@@ -81,6 +93,7 @@ if (this.fpsToggle && this.fpsElement) {
     }
   }
 
+  //save and load game data
   saveGame() {
     localStorage.setItem("schoolNightSave", JSON.stringify({
       volume: this.volume,
@@ -103,6 +116,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.showFPS = d.showFPS ?? true;
   }
 
+  //load current room map and walls
   loadRoom() {
     this.map = maps[this.roomY][this.roomX];
     this.walls = buildWalls(this.map);
@@ -110,6 +124,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.h = this.map.length * tileSize;
   }
 
+  //update music based on room
   updateMusic() {
     const id = this.music[this.roomY]?.[this.roomX];
     if (!id) return;
@@ -128,6 +143,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.currentMusic.play();
   }
   
+  //start room transition animation
   startTransition(dx, dy) {
     if (this.transitioning) return;
 
@@ -146,6 +162,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.targetCamY = dy * this.h;
   }
 
+  //complete room transition
   finishTransition() {
     this.roomX += this.transitionDir.dx;
     this.roomY += this.transitionDir.dy;
@@ -171,6 +188,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.saveGame();
   }
 
+  //update game state each frame
   update() {
     if (this.paused) return;
 
@@ -191,7 +209,46 @@ if (this.fpsToggle && this.fpsElement) {
     if (keys.has("a")) dx--;
     if (keys.has("d")) dx++;
 
+    if (keys.has(" ") && player.attackCooldown <= 0) {
+        this.attacks.push(createMeleeHitbox(player));
+        player.attackCooldown = player.attackRate;
+      }
+
+      if (player.attackCooldown > 0)
+      player.attackCooldown--;
+
+      for (const atk of this.attacks) atk.life--;
+      this.attacks = this.attacks.filter(a => a.life > 0);
+
+      for (const enemy of this.enemies) {
+          updateEnemy(enemy, player);
+
+
+      for (const atk of this.attacks) {
+            if (collision(enemy, atk)) {
+            enemy.hp -= atk.damage;
+            atk.life = 0;
+
+            const dx = enemy.x - player.x;
+            const dy = enemy.y - player.y;
+            const l = Math.hypot(dx, dy) || 1;
+            
+            const force = 4;
+
+            enemy.kbX = (dx / l) * force;
+            enemy.kbY = (dy / l) * force;
+
+            if (enemy.hp <= 0) enemy.alive = false;
+        }
+    }
+}
+
+
+this.enemies = this.enemies.filter(e => e.alive);
+
     if (dx || dy) {
+      player.facing.x = dx;
+      player.facing.y = dy;
       const l = Math.hypot(dx, dy);
       move((dx / l) * player.speed, (dy / l) * player.speed, this.walls);
     }
@@ -206,6 +263,7 @@ if (this.fpsToggle && this.fpsElement) {
       this.startTransition(0, -1);
   }
 
+  //render game graphics
   draw() {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -238,8 +296,19 @@ if (this.fpsToggle && this.fpsElement) {
     }
 
     this.ctx.drawImage(characterGreen, player.x - 7, player.y - 60);
+  
+  
+    this.ctx.fillStyle = "red";
+    for (const atk of this.attacks)
+    this.ctx.fillRect(atk.x, atk.y, atk.width, atk.height);
+
+
+    this.ctx.fillStyle = "purple";
+    for (const e of this.enemies)
+    this.ctx.fillRect(e.x, e.y, e.width, e.height);
   }
 
+  //main game loop
   run = () => {
     this.fpsFrames++;
     const now = performance.now();

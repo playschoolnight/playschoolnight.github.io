@@ -1,27 +1,29 @@
+//tile constants
 export const tileSize = 32;
 
+//convert map data to wall objects
 export function buildWalls(map) {
   const walls = [];
 
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      if (map[y][x] == "#") {
+      if (map[y][x] === "#") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
           width: tileSize,
           height: tileSize,
           id: "wallImage"
-        });}
-        if (map[y][x] == "'") {
+        });
+      } else if (map[y][x] === "'") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
           width: 0,
           height: 0,
           id: "whiteFloor"
-        });}
-         if (map[y][x] == "`") {
+        });
+      } else if (map[y][x] === "`") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
@@ -29,8 +31,7 @@ export function buildWalls(map) {
           height: 0,
           id: "blueFloor"
         });
-      }
-      if (map[y][x] == "*") {
+      } else if (map[y][x] === "*") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
@@ -38,8 +39,7 @@ export function buildWalls(map) {
           height: 0,
           id: "corner1"
         });
-      }
-      if (map[y][x] == "&") {
+      } else if (map[y][x] === "&") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
@@ -47,8 +47,7 @@ export function buildWalls(map) {
           height: 0,
           id: "corner2"
         });
-      }
-      if (map[y][x] == "<") {
+      } else if (map[y][x] === "<") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
@@ -56,8 +55,7 @@ export function buildWalls(map) {
           height: 0,
           id: "wallCorner1"
         });
-      }
-      if (map[y][x] == ">") {
+      } else if (map[y][x] === ">") {
         walls.push({
           x: x * tileSize,
           y: y * tileSize,
@@ -68,6 +66,6 @@ export function buildWalls(map) {
       }
     }
   }
+
   return walls;
-  
 }

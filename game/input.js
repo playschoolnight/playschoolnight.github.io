@@ -1,9 +1,11 @@
+//track pressed keys
 export const keys = new Set();
 
-document.addEventListener("keydown", e => {3
+//input listeners
+document.addEventListener("keydown", (e) => {
   keys.add(e.key);
 });
 
-document.addEventListener("keyup", e => {
+document.addEventListener("keyup", (e) => {
   keys.delete(e.key);
 });

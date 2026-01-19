@@ -1,3 +1,4 @@
+//collision detection
 export function collision(a, b) {
   return (
     a.x < b.x + b.width &&
