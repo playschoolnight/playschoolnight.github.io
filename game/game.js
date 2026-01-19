@@ -302,7 +302,6 @@ this.enemies = this.enemies.filter(e => e.alive);
     for (const atk of this.attacks)
     this.ctx.fillRect(atk.x, atk.y, atk.width, atk.height);
 
-
     const maria = document.getElementById("maria");
     for (const e of this.enemies)
     this.ctx.drawImage(maria, e.x, e.y - 32);
