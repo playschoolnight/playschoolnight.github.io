@@ -3,7 +3,7 @@ export function createEnemy(x, y) {
   return {
     x,
     y,
-    width: 32,
+    width: 66,
     height: 32,
     hp: 3,
     speed: 1,

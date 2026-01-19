@@ -233,14 +233,14 @@ if (this.fpsToggle && this.fpsElement) {
             const dy = enemy.y - player.y;
             const l = Math.hypot(dx, dy) || 1;
             
-            const force = 4;
+            const force = 10;
 
             enemy.kbX = (dx / l) * force;
             enemy.kbY = (dy / l) * force;
 
             if (enemy.hp <= 0) enemy.alive = false;
         }
-    }
+    }    
 }
 
 
@@ -303,9 +303,9 @@ this.enemies = this.enemies.filter(e => e.alive);
     this.ctx.fillRect(atk.x, atk.y, atk.width, atk.height);
 
 
-    this.ctx.fillStyle = "purple";
+    const maria = document.getElementById("maria");
     for (const e of this.enemies)
-    this.ctx.fillRect(e.x, e.y, e.width, e.height);
+    this.ctx.drawImage(maria, e.x, e.y - 32);
   }
 
   //main game loop

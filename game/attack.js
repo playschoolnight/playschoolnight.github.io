@@ -1,6 +1,6 @@
 //create melee attack hitbox
 export function createMeleeHitbox(player) {
-  const size = 64;
+  const size = 32;
 
   return {
     x: player.x + player.width / 2 + player.facing.x * size - size / 2,
