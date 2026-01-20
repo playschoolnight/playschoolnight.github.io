@@ -1,7 +1,7 @@
-//tile constants
+// Tile constants
 export const tileSize = 32;
 
-//convert map data to wall objects
+// Convert map data to wall objects
 export function buildWalls(map) {
   const walls = [];
 

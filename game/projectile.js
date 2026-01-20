@@ -1,3 +1,4 @@
+// Create projectile from player position
 export function createProjectile(player) {
   const size = 8;
   const speed = 5;
@@ -14,11 +15,12 @@ export function createProjectile(player) {
   };
 }
 
+// Update projectile position and lifetime
 export function updateProjectile(proj, walls) {
   proj.x += proj.dx;
   proj.y += proj.dy;
 
-  // check collision with walls
+  // Check collision with walls
   for (const wall of walls) {
     if (wall.width > 0 && proj.x < wall.x + wall.width &&
         proj.x + proj.width > wall.x &&

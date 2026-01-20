@@ -1,7 +1,7 @@
-//track pressed keys
+// Track pressed keys
 export const keys = new Set();
 
-//input listeners
+// Input listeners
 document.addEventListener("keydown", (e) => {
   keys.add(e.key);
 });

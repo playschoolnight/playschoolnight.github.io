@@ -1,4 +1,4 @@
-//game maps for each room
+// Game maps for each room
 export const maps = [
   [
     [

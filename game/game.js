@@ -13,8 +13,7 @@ export default class Game {
   constructor(ctx) {
     this.ctx = ctx;
 
-
-      //rooms and transitions
+    // Rooms and transitions
     this.roomX = 0;
     this.roomY = 0;
 
@@ -30,7 +29,7 @@ export default class Game {
     this.nextWalls = null;
 
 
-      //audio
+    // Audio
     this.paused = true;
     this.started = false;
 
@@ -44,17 +43,22 @@ export default class Game {
     this.currentMusic = null;
     
 
+    // Enemy data by room
+    this.enemyData = [
+      [[[200, 200]], [[150, 150]]],
+      [[[250, 200]], [[300, 150]]]
+    ];
 
-      //enemies and combat
+    // Enemies and combat
     this.attacks = [];
-    this.enemies = [ createEnemy(200, 200) ];
     this.projectiles = [];
+    this.enemies = [];
 
-    //projectile cooldown
+    // Projectile cooldown
     this.projectileCooldown = 0;
-    this.projectileRate = 20;
+    this.projectileRate = 67;
 
-      //fps tracker
+    // FPS tracker
     this.fpsElement = document.getElementById("fps");
     this.fpsFrames = 0;
     this.fpsLastTime = performance.now();
@@ -89,7 +93,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.loadRoom();
   }
 
-  //pause and resume
+  // Pause and resume
   pause() { this.paused = true; }
 
   resume() {
@@ -100,7 +104,7 @@ if (this.fpsToggle && this.fpsElement) {
     }
   }
 
-  //save and load game data
+  // Save and load game data
   saveGame() {
     localStorage.setItem("schoolNightSave", JSON.stringify({
       volume: this.volume,
@@ -123,15 +127,16 @@ if (this.fpsToggle && this.fpsElement) {
     this.showFPS = d.showFPS ?? true;
   }
 
-  //load current room map and walls
+  // Load current room map and walls
   loadRoom() {
     this.map = maps[this.roomY][this.roomX];
     this.walls = buildWalls(this.map);
     this.w = this.map[0].length * tileSize;
     this.h = this.map.length * tileSize;
+    this.loadEnemies();
   }
 
-  //update music based on room
+  // Update music based on room
   updateMusic() {
     const id = this.music[this.roomY]?.[this.roomX];
     if (!id) return;
@@ -149,8 +154,19 @@ if (this.fpsToggle && this.fpsElement) {
     this.currentMusic.volume = this.volume;
     this.currentMusic.play();
   }
+
+  // Load enemies for current room
+  loadEnemies() {
+    this.enemies = [];
+    const roomEnemies = this.enemyData[this.roomY]?.[this.roomX];
+    if (!roomEnemies) return;
+    
+    for (const [x, y] of roomEnemies) {
+      this.enemies.push(createEnemy(x, y));
+    }
+  }
   
-  //start room transition animation
+  // Start room transition animation
   startTransition(dx, dy) {
     if (this.transitioning) return;
 
@@ -169,7 +185,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.targetCamY = dy * this.h;
   }
 
-  //complete room transition
+  // Complete room transition
   finishTransition() {
     this.roomX += this.transitionDir.dx;
     this.roomY += this.transitionDir.dy;
@@ -195,7 +211,7 @@ if (this.fpsToggle && this.fpsElement) {
     this.saveGame();
   }
 
-  //update game state each frame
+  // Update game state each frame
   update() {
     if (this.paused) return;
 
@@ -234,7 +250,7 @@ if (this.fpsToggle && this.fpsElement) {
     for (const atk of this.attacks) atk.life--;
     this.attacks = this.attacks.filter(a => a.life > 0);
 
-    for (const enemy of this.enemies) updateEnemy(enemy, player);
+    for (const enemy of this.enemies) updateEnemy(enemy, player, this.walls);
 
     // update projectiles
     for (const proj of this.projectiles) {
@@ -283,6 +299,32 @@ if (this.fpsToggle && this.fpsElement) {
         }
     }
 
+for (const enemy of this.enemies) {
+  if (collision(player, enemy)) {
+    const dx = player.x - enemy.x;
+    const dy = player.y - enemy.y;
+    const l = Math.hypot(dx, dy) || 1;
+    const force = 20;
+
+
+    const kbX = (dx / l) * force;
+    const kbY = (dy / l) * force;
+
+    move(kbX, kbY, this.walls);
+
+
+    player.hp -= 1;
+    if (player.hp <= 0){
+      this.loadGame();
+      enemy.hp = 0;
+      this.loadEnemies();
+      player.hp = 10;
+    }
+  }
+}
+
+
+
     if (dx || dy) {
         player.facing.x = dx;
         player.facing.y = dy;
@@ -300,7 +342,7 @@ if (this.fpsToggle && this.fpsElement) {
         this.startTransition(0, -1);
   }
 
-  //render game graphics
+  // Render game graphics
   draw() {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -349,7 +391,7 @@ if (this.fpsToggle && this.fpsElement) {
       this.ctx.fillRect(proj.x, proj.y, proj.width, proj.height);
   }
 
-  //main game loop
+  // Main game loop
   run = () => {
     this.fpsFrames++;
     const now = performance.now();
@@ -364,6 +406,8 @@ if (this.fpsToggle && this.fpsElement) {
     this.update();
     this.draw();
     this.updateMusic();
+
+    document.getElementById("hp").textContent = `HP: ${player.hp}`;
 
     requestAnimationFrame(this.run);
   };
